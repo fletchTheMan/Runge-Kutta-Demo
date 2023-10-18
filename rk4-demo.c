@@ -15,26 +15,50 @@
 /* A Struct to use particles can use any units but defaults to in terms of electron
  * so that the values can be integers */
 typedef struct particle {
+	int numberOfForces;
 	/* charge and mass are defined in terms of the electron */
 	double charge;
 	double mass;
 	/* position velocity and force. Acceleration can be found through a=f/m */
 	Vector2 position;
 	Vector2 velocity;
-	Vector2 fnet;
+	Vector2 forces[];
 } particle;
+
+double rk4solver(double x0, double y0, double h, double (*function)(double, double)){
+	double k1, k2, k3, k4;
+	k1 = (*function)(x0, y0);
+	k2 = (*function)(x0 + h/2, y0 + (h * k1)/2);
+	k3 = (*function)(x0 + h/2, y0 + (h * k2)/2);
+	k4 = (*function)(x0 + h, y0 + (h * k3));
+	return y0 + (h/6)*(k1 + 2*k2 + 2*k3 +k4);
+}
 
 /* Returns 0 for an error and 1 for success */
 int addForce(particle* a, Vector2 addedForce){
+	int i;
 	if(a == NULL){
 		fprintf(stderr, "particle is null");
 		return 0;
 	}
 	else {
-		a->fnet.x += addedForce.x;
-		a->fnet.y += addedForce.y;
+		Vector2 newForces[a -> numberOfForces + 1];
+		for(i = 0; i < a -> numberOfForces; i++){
+			newForces[i] = a -> forces[i];
+		}
+		newForces[a -> numberOfForces] = addedForce;
 		return 1;
 	}
+}
+
+Vector2 sumForces(particle* a){
+	int i;
+	Vector2 fnet = { 0.0, 0.0 };
+	for(i = 0; i < a -> numberOfForces; i++){
+		fnet.x += a -> forces[i].x;
+		fnet.y += a -> forces[i].y;
+	}
+	return fnet;
 }
 
 void moveParticle(particle *a, float deltaTime){

@@ -11,5 +11,11 @@ release:
 rk4-demo:
 	$(CC) -o $(TARGET) $(CFLAGS) $(LIBS) $(TARGET).c
 
+test:
+	$(CC) -o test $(CFLAGS) $(LIBS) test.c
+
+test-clear:
+	rm test
+
 clear:
 	rm $(TARGET)
