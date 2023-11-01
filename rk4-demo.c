@@ -22,7 +22,6 @@ typedef struct particle {
 	/* position velocity and force. Acceleration can be found through a=f/m */
 	Vector2 position;
 	Vector2 velocity;
-	Vector2 forces[];
 } particle;
 
 double rk4solver(double x0, double y0, double h, double (*function)(double, double)){
@@ -34,35 +33,12 @@ double rk4solver(double x0, double y0, double h, double (*function)(double, doub
 	return y0 + (h/6)*(k1 + 2*k2 + 2*k3 +k4);
 }
 
-/* Returns 0 for an error and 1 for success */
-int addForce(particle* a, Vector2 addedForce){
-	int i;
-	if(a == NULL){
-		fprintf(stderr, "particle is null");
-		return 0;
-	}
-	else {
-		Vector2 newForces[a -> numberOfForces + 1];
-		for(i = 0; i < a -> numberOfForces; i++){
-			newForces[i] = a -> forces[i];
-		}
-		newForces[a -> numberOfForces] = addedForce;
-		return 1;
-	}
-}
-
-Vector2 sumForces(particle* a){
-	int i;
-	Vector2 fnet = { 0.0, 0.0 };
-	for(i = 0; i < a -> numberOfForces; i++){
-		fnet.x += a -> forces[i].x;
-		fnet.y += a -> forces[i].y;
-	}
-	return fnet;
+Vector2 eletricForce(particle *a, particle *b){
+	return { (K * a -> charge * b -> charge)/(pow(b -> position.x - a -> position.x, 2) + pow(b -> position.y - a -> position.y, 2)) * (b - a)/ pow(b - a, 1/2) };
 }
 
 void moveParticle(particle *a, float deltaTime){
-
+	a -> position.x =
 }
 
 int main(){

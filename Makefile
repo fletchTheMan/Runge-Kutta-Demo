@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall
-LIBS = -lraylib
+LIBS = -lraylib -lm
 TARGET = rk4-demo
 
 all: rk4-demo
